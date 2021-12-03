@@ -25,7 +25,7 @@ function [lambdas,deltas] = BASICtable(p,field,points)
 %
 % By Elias Raninen 2021
 %
-% version 1.0 (Oct. 13, 2021)
+% version 1.01 (Dec. 2, 2021)
 
 if ~exist('points','var')
     points = 5000;
@@ -56,14 +56,17 @@ try % read table
     end
 catch % write table
     fprintf(['Creating new table: ' fname '\nPlease wait...'])
-    maxdelta  = 0;
+
+    % find max(lambdas) so that max(deltas) is at least 1
     maxlambda = p;
-    while maxdelta < 1 % ensure that max(lambdas) is at least 1
+    maxdelta = integral(@(t) BASICint(t,maxlambda), 0, 1, 'ArrayValued', true);
+    while maxdelta < 1 
+        maxlambda = maxlambda + 1;
         maxdelta = integral(@(t) BASICint(t,maxlambda), 0, 1, 'ArrayValued', true);
-        maxlambda = maxlambda + p/10;
     end
+    
+    % create table
     lambdas = linspace(0,maxlambda,points).';
-%     deltas = lambdas/p .* hypergeom([1,1],be*p+1,1-lambdas); % much slower
     deltas = integral(@(t) BASICint(t,lambdas), 0, 1, 'ArrayValued', true);
 
     T = table(lambdas,deltas);

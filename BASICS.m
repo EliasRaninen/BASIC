@@ -20,7 +20,7 @@ function [BEST, al] = BASICS(X,lambdas,deltas)
 %
 % By Elias Raninen 2021
 %
-% version 1.0 (Oct. 12, 2021)
+% version 1.01 (Dec. 2, 2021)
 
 
 % n samples, p dimensions
@@ -52,7 +52,7 @@ deltahat = diag(deltahat);
 lambdahat = interp1(deltas,lambdas,deltahat,'linear');
 if any(isnan(lambdahat)) % extrapolate in case deltahat value is out of range of given deltas
     fprintf('BASICS.m: eigenvalues of SSCM out of range of given table. Using extrapolation via splines.\n');
-    lambdahat = interp1(deltas,lambdas,deltahat,'linear');
+    lambdahat = interp1(deltas,lambdas,deltahat,'spline');
 end
 
 % normalize to shape
